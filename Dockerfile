@@ -1,4 +1,5 @@
-FROM heroku/heroku:18
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
 
 COPY . /tmp/buildpack
 
