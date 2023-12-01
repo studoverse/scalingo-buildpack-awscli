@@ -14,13 +14,21 @@ function indent() {
 AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 
 BUILD_DIR=$1
+CACHE_DIR=$2
+
 BUILDPACK_DIR="$(dirname $(dirname $0))"
 INSTALL_DIR="/app/.awscli"
 TMP_DIR=$(mktemp -d)
 
-echo "-----> Downloading AWS CLI"
-curl --silent --show-error --fail -o "${TMP_DIR}/awscliv2.zip" "${AWS_CLI_URL}" |& indent
-unzip -qq -d "${TMP_DIR}" "${TMP_DIR}/awscliv2.zip" |& indent
+# Check if the file exists in cache
+if [ -e "${CACHE_DIR}/awscliv2.zip" ]; then
+    echo "-----> AWS CLI found in cache"
+else
+    echo "-----> Downloading AWS CLI into cache"
+    curl --silent --show-error --fail -o "${CACHE_DIR}/awscliv2.zip" "${AWS_CLI_URL}" |& indent
+fi
+
+unzip -qq -d "${TMP_DIR}" "${CACHE_DIR}/awscliv2.zip" |& indent
 
 echo "-----> Installing AWS CLI"
 mkdir -p "${BUILD_DIR}/.awscli"
